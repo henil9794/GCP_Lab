@@ -1,4 +1,4 @@
-# GCP Compute Engine Lab — Car Price Prediction
+# GCP Compute Engine Lab - Car Price Prediction
 
 ## Overview
 
@@ -32,21 +32,21 @@ GCP_Lab/
 ├── install_dependencies.sh       # Script to set up Python env and install deps
 ├── carprice_dataset.csv          # Dataset
 ├── car_price_regressor.py        # ML training and evaluation script
-├── requirements.txt              # Python dependencies
-└── README.md                     # This file
+├── requirements.txt              # Requirements file for python dependencies
+└── README.md                     # README file
 ```
 
 ## Lab Steps
 
-### Part 1 — Local Machine Setup
+### Part 1 - Local Machine Setup
 
-#### Step 1.1 — Create Conda Environment
+#### Step 1.1 - Create Conda Environment
 ```bash
 conda create -n gcp_lab python=3.10 -y
 conda activate gcp_lab
 ```
 
-#### Step 1.2 — Generate SSH Keys
+#### Step 1.2 - Generate SSH Keys
 ```bash
 ssh-keygen -t rsa -b 2048 -C "your_email@example.com"
 ```
@@ -57,9 +57,9 @@ cat ~/.ssh/id_rsa.pub
 
 ---
 
-### Part 2 — Standard VM Setup (GCP Console)
+### Part 2 - Standard VM Setup (GCP Console)
 
-#### Step 1 — Create the Standard VM
+#### Step 1 - Create the Standard VM
 1. Go to **Compute Engine → VM instances → Create Instance**
 2. Configure:
    - **Name:** `vm1-gcplab`
@@ -70,7 +70,7 @@ cat ~/.ssh/id_rsa.pub
 
 ![vm1](images/vm1.png)
 
-#### Step 2 — Create a 10GB SSD Persistent Disk
+#### Step 2 - Create a 10GB SSD Persistent Disk
 1. Go to **Compute Engine → Disks → Create Disk**
 2. Configure:
    - **Name:** `vm1-gcplab-disk`
@@ -81,29 +81,29 @@ cat ~/.ssh/id_rsa.pub
 
 ![vm1_disk](images/vm1_disk.png)
 
-> **Why a separate disk?** The persistent disk is independent of the VM. It can be detached and reattached to a different VM, which is exactly what this lab does — the same disk with the same data runs on both VMs.
+> **Why a separate disk?** The persistent disk is independent of the VM. It can be detached and reattached to a different VM, which is exactly what this lab does - the same disk with the same data runs on both VMs.
 
-#### Step 3 — Attach the Disk to the Standard VM
+#### Step 3 - Attach the Disk to the Standard VM
 1. Go to **VM instances** → click `vm1-gcplab` → **Edit**
 2. Scroll to **Additional disks** → **Attach existing disk**
 3. Select `vm1-gcplab-disk` → **Save**
 4. **Stop and Start the VM** so the disk registers
 
-#### Step 4 — Add SSH Key to the VM
+#### Step 4 - Add SSH Key to the VM
 1. Click `vm1-gcplab` → **Edit** → scroll to **SSH Keys**
 2. Click **+ Add item** → paste your public key → **Save**
 
-#### Step 5 — SSH into the Standard VM
+#### Step 5 - SSH into the Standard VM
 ```bash
 ssh -i ~/.ssh/id_rsa YOUR_USERNAME@EXTERNAL_IP
 ```
 
-#### Step 6 — Format and Mount the Disk
+#### Step 6 - Format and Mount the Disk
 ```bash
 # Verify disk is visible
 lsblk
 
-# Format the disk (ONLY do this once — never again on the second VM)
+# Format the disk (ONLY do this once - never again on the second VM)
 sudo mkfs.ext4 -F /dev/sdb
 
 # Create mount directory and mount
@@ -115,7 +115,7 @@ sudo chown $USER:$USER /vm1-gcplab-disk
 df -h | grep vm1-gcplab-disk
 ```
 
-#### Step 7 — Copy Files to the VM (SCP)
+#### Step 7 - Copy Files to the VM (SCP)
 Run this from your **local machine** in the parent folder of `GCP_Lab`:
 ```bash
 # Windows PowerShell
@@ -130,7 +130,7 @@ Verify on the VM:
 ls /vm1-gcplab-disk/GCP_Lab/
 ```
 
-#### Step 8 — Install Dependencies and Run the Script
+#### Step 8 - Install Dependencies and Run the Script
 ```bash
 # Install Python and venv
 sudo apt update -y
@@ -157,9 +157,9 @@ cat /vm1-gcplab-disk/metrics.csv
 
 ---
 
-### Part 3 — Disk Snapshot
+### Part 3 - Disk Snapshot
 
-#### Step 9 — Take a Snapshot Before Switching VMs
+#### Step 9 - Take a Snapshot Before Switching VMs
 1. Go to **Compute Engine → Disks** → click `vm1-gcplab-disk`
 2. Click **Create Snapshot**
 3. Configure:
@@ -171,18 +171,18 @@ cat /vm1-gcplab-disk/metrics.csv
 
 > **Why snapshots?** A snapshot is a point-in-time backup of your disk. If anything goes wrong on the second VM, you can restore from this snapshot and recover your data and metrics.
 
-#### Step 10 — Detach the Disk from the Standard VM
+#### Step 10 - Detach the Disk from the Standard VM
 1. Click `vm1-gcplab` → **Edit** → scroll to **Additional disks**
 2. Click **X** next to `vm1-gcplab-disk` → **Save**
 
-#### Step 11 — Stop the Standard VM
+#### Step 11 - Stop the Standard VM
 1. Go to **VM instances** → check `vm1-gcplab` → click **Stop**
 
 ---
 
-### Part 4 — CPU-Optimized VM
+### Part 4 - CPU-Optimized VM
 
-#### Step 12 — Create the CPU-Optimized VM
+#### Step 12 - Create the CPU-Optimized VM
 1. Go to **VM instances → Create Instance**
 2. Configure:
    - **Name:** `vm2-gcplab-cpu-optimized`
@@ -194,13 +194,13 @@ cat /vm1-gcplab-disk/metrics.csv
 
 > **Why c2d-highcpu-2?** C2D machines use AMD EPYC processors with higher clock speeds, optimized for compute-intensive tasks like ML training. This is what makes the performance comparison meaningful.
 
-#### Step 13 — Add SSH Key and Attach Disk
+#### Step 13 - Add SSH Key and Attach Disk
 1. Click `vm2-gcplab-cpu-optimized` → **Edit**
 2. Add your SSH public key under **SSH Keys**
 3. Under **Additional disks** → **Attach existing disk** → select `vm1-gcplab-disk`
 4. Click **Save**
 
-#### Step 14 — SSH into the CPU-Optimized VM
+#### Step 14 - SSH into the CPU-Optimized VM
 
 If you get a host key warning (common when reusing the same IP):
 ```bash
@@ -212,9 +212,9 @@ Then connect:
 ssh -i ~/.ssh/id_rsa YOUR_USERNAME@NEW_EXTERNAL_IP
 ```
 
-#### Step 15 — Mount the Disk and Run the Script
+#### Step 15 - Mount the Disk and Run the Script
 ```bash
-# Mount the disk (DO NOT format again — data is already there)
+# Mount the disk (DO NOT format again - data is already there)
 sudo mkdir /vm1-gcplab-disk
 sudo mount /dev/sdb /vm1-gcplab-disk
 sudo chown $USER:$USER /vm1-gcplab-disk
@@ -244,18 +244,18 @@ cat /vm1-gcplab-disk/metrics.csv
 |---|---|
 | **Training Time** | How long the model took to learn from the data |
 | **Inference Time** | How long predictions took on the test set |
-| **MSE** | Mean Squared Error — average of squared prediction errors |
-| **MAE** | Mean Absolute Error — average absolute difference between predicted and actual price |
+| **MSE** | Mean Squared Error - average of squared prediction errors |
+| **MAE** | Mean Absolute Error - average absolute difference between predicted and actual price |
 | **R2** | R Square - measures how well the model explains the variation in car prices compared to just predicting the average price every time |
 
 ---
 
 ## Key Concepts
 
-**Persistent Disk** — A storage disk that exists independently of any VM. It can be detached from one VM and attached to another, making it ideal for carrying data across machines.
+**Persistent Disk** - A storage disk that exists independently of any VM. It can be detached from one VM and attached to another, making it ideal for carrying data across machines.
 
-**Disk Snapshot** — A point-in-time backup of a persistent disk. Stored separately and can be used to restore data or create a new disk in a different zone.
+**Disk Snapshot** - A point-in-time backup of a persistent disk. Stored separately and can be used to restore data or create a new disk in a different zone.
 
-**SCP** — A command-line tool to securely transfer files between your local machine and a remote server over SSH.
+**SCP** - A command-line tool to securely transfer files between your local machine and a remote server over SSH.
 
-**Virtual Environment** — An isolated Python environment stored on the persistent disk so it can be reused on the second VM without reinstalling dependencies.
+**Virtual Environment** - An isolated Python environment stored on the persistent disk so it can be reused on the second VM without reinstalling dependencies.
